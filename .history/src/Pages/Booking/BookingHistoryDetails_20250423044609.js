@@ -25,8 +25,7 @@ import {
 } from "../../Redux/Slice/paymentSlice";
 import ModalBookingCancelled from "../../Components/Modal/Booking/ModalBookingCancelled";
 
-const BookingHistoryDetails = ({ navigation, route }) => {
-  const type = route?.params?.type;
+const BookingHistoryDetails = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { bookingDetailData, loadingBookingDetail } = useAppSelector(
     (state) => state.booking
@@ -283,19 +282,17 @@ const BookingHistoryDetails = ({ navigation, route }) => {
         </View>
         <View style={styles.br} />
       </View>
-      {type === "Booked" && (
-        <View style={styles.footerSection}>
-          <View style={styles.br} />
-          <Text style={styles.subTitle}>Phương thức hủy phòng</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setOpenModal(true)}
-          >
-            <Text style={styles.buttonText}>Xác nhận hủy phòng</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
+      <View style={styles.footerSection}>
+        <View style={styles.br} />
+        <Text style={styles.subTitle}>Phương thức hủy phòng</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setOpenModal(true)}
+        >
+          <Text style={styles.buttonText}>Xác nhận hủy phòng</Text>
+        </TouchableOpacity>
+      </View>
+      {/* {openModal && <ModalBookingCancelled onClose={setOpenModal(false)} />} */}
       <ModalBookingCancelled
         visible={openModal}
         onClose={() => setOpenModal(false)}

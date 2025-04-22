@@ -30,16 +30,9 @@ const RoomBooking = () => {
   );
 
   const bookings = bookingStatus?.CHECKIN || [];
-  const handleToBookingDetail = (item) => {
-    // console.log("item.bookingId", item.bookingId);
-    dispatch(getBookingDetails(item.bookingId));
-    navigation.navigate("BookingHistoryDetails", { type: "Booking" });
-  };
+
   const renderBookingItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => handleToBookingDetail(item)}
-      style={styles.bookingHistoryScreen__bookingItem}
-    >
+    <View style={styles.bookingHistoryScreen__bookingItem}>
       <Image
         source={{ uri: item?.image }}
         style={styles.bookingHistoryScreen__bookingImage}
@@ -75,7 +68,7 @@ const RoomBooking = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   return (

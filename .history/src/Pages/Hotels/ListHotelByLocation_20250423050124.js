@@ -72,59 +72,6 @@ const ListHotelByLocation = ({ navigation }) => {
     // console.log(item?.hotelId);
   };
 
-  const test = [
-    {
-      hotelId: 10,
-      hotelLocation: "Hà Nội",
-      hotelName: "Old Quarter Inn",
-      hotelRating: 4.3,
-      imageUrl: null,
-      price: 875000,
-      promotionName: "Ưu đãi đầu năm 2025",
-      sumReview: 300,
-    },
-    {
-      hotelId: 2,
-      hotelLocation: "Hà Nội",
-      hotelName: "Onomo",
-      hotelRating: 4.3,
-      imageUrl:
-        "https://res.cloudinary.com/dt7eo0hbq/image/upload/v1729241122/Room/nipyn0qgyoyhtgkadlyi.jpg",
-      price: 950000,
-      promotionName: "Ưu đãi đầu năm 2025",
-      sumReview: 150,
-    },
-    {
-      hotelId: 11,
-      hotelLocation: "Hà Nội",
-      hotelName: "Lotus Blossom Resort",
-      hotelRating: 4.1,
-      imageUrl: null,
-      price: 1000000,
-      promotionName: null,
-      sumReview: 250,
-    },
-    {
-      hotelId: 13,
-      hotelLocation: "Hà Nội",
-      hotelName: "Tràng An Plaza",
-      hotelRating: 4.4,
-      imageUrl: null,
-      price: 1125000,
-      promotionName: "Giảm giá mùa hè",
-      sumReview: 320,
-    },
-    {
-      hotelId: 12,
-      hotelLocation: "Hà Nội",
-      hotelName: "Skyline Hotel",
-      hotelRating: 4.6,
-      imageUrl: null,
-      price: 1250000,
-      promotionName: "Ưu đãi cuối tuần",
-      sumReview: 380,
-    },
-  ];
   const HotelItem1 = ({ item }) => {
     return (
       <TouchableOpacity
@@ -243,7 +190,7 @@ const ListHotelByLocation = ({ navigation }) => {
                 <View>
                   <Text style={styles.oldPrice}>
                     {/* {Math.round(item.price * 2).toLocaleString()} đ */}
-                    {item?.price?.toLocaleString()} đ
+                    {item?.promotionPrice?.toLocaleString()} đ
                   </Text>
                 </View>
                 <View>

@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Modal,
   TextInput,
-  Alert,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hook";
@@ -21,73 +20,61 @@ const ModalBookingCancelled = ({
   bookingId,
   navigation,
   handleToBookingScreen,
-  policyRoomList, // Nhận mảng từ props
 }) => {
   const bookingStatus = useAppSelector((state) => state.booking);
+
   const [cancelReason, setCancelReason] = useState("");
   const [error, setError] = useState("");
   const dispatch = useAppDispatch();
+  const policyRoomList = [
+    {
+      policyId: 4,
+      policyName: "PERSON",
+      policyDescription: "Trẻ em dưới 12 tuổi được miễn phí tiền phòng",
+    },
+    {
+      policyId: 12,
+      policyName: "PAYMENT",
+      policyDescription: "Yêu cầu thanh toán đủ 100% trước khi nhận phòng",
+    },
+    {
+      policyId: 1,
+      policyName: "CHECKIN",
+      policyDescription:
+        "Khách hàng cần check in trong thời gian quy định nếu không sẽ bị tính thêm phụ phí",
+    },
+    {
+      policyId: 3,
+      policyName: "CANCEL",
+      policyDescription: "Hoàn tiền 30% nếu hủy phòng trước 24 giờ",
+    },
+    {
+      policyId: 2,
+      policyName: "CHECKOUT",
+      policyDescription:
+        "Khách hàng cần check out trong thời gian quy định nếu không sẽ bị tính thêm phụ phí",
+    },
+  ];
 
   const handleConfirmCancelled = () => {
-    try {
-      if (!cancelReason?.trim()) {
-        setError("Vui lòng nhập lý do hủy phòng.");
-        return;
-      }
-
-      const value = {
-        bookingId: bookingId,
-        reason: cancelReason,
-      };
-
-      console.log("bookingId", bookingId);
-      console.log("Xác nhận hủy phòng với lý do:", cancelReason);
-
-      dispatch(fetchConfirmBookingCancelled(value))
-        .unwrap()
-        .catch((error) => {
-          Alert.alert("Lỗi", `Không thể hủy đặt phòng: ${error.message}`);
-        });
-
-      dispatch(fetchBookingStatus())
-        .unwrap()
-        .catch((error) => {
-          Alert.alert(
-            "Lỗi",
-            `Không thể cập nhật trạng thái đặt phòng: ${error.message}`
-          );
-        });
-
-      setError("");
-      setCancelReason("");
-      onClose();
-      handleToBookingScreen();
-    } catch (error) {
-      Alert.alert("Lỗi", `Không thể xử lý hủy phòng: ${error.message}`);
+    if (!cancelReason.trim()) {
+      setError("Vui lòng nhập lý do hủy phòng.");
+      return;
     }
-  };
+    const value = {
+      bookingId: bookingId,
+      reason: cancelReason,
+    };
 
-  const renderPolicyItem = (policy, index) => {
-    if (!policy?.name || !policy?.description) return null;
-    return (
-      <View key={policy?.id || `policy-${index}`} style={styles.policyItem}>
-        <Ionicons
-          name="newspaper-outline"
-          size={20}
-          color="#191D39"
-          style={styles.iconPolicy}
-        />
-        <View style={styles.policyContent}>
-          <Text style={styles.policyName}>{policy.name}</Text>
-          <Text style={styles.policyDescription}>{policy.description}</Text>
-          {policy?.condition && policy?.value && (
-            <Text style={styles.policyDetails}>
-              Điều kiện: {policy.condition} giờ, Hoàn tiền: {policy.value}
-            </Text>
-          )}
-        </View>
-      </View>
-    );
+    console.log("bookingId", bookingId);
+    console.log("Xác nhận hủy phòng với lý do:", cancelReason);
+
+    dispatch(fetchConfirmBookingCancelled(value));
+    dispatch(fetchBookingStatus());
+    setError(""); // Xóa lỗi nếu đã nhập lý do
+    setCancelReason(""); // Reset TextInput
+    onClose(); // Đóng modal
+    handleToBookingScreen();
   };
 
   return (
@@ -106,13 +93,20 @@ const ModalBookingCancelled = ({
             </TouchableOpacity>
           </View>
           <ScrollView style={styles.policies}>
-            {policyRoomList?.length > 0 ? (
-              <>
-                <Text style={styles.sectionTitle}>Danh sách chính sách</Text>
-                {policyRoomList.map((policy, index) =>
-                  renderPolicyItem(policy, index)
-                )}
-              </>
+            {policyRoomList.length > 0 ? (
+              policyRoomList.map((policy) => (
+                <View key={policy.policyId} style={styles.policyItem}>
+                  <Ionicons
+                    name="newspaper-outline"
+                    size={15}
+                    color="#191D39"
+                    style={styles.iconPolicy}
+                  />
+                  <Text style={styles.policyText}>
+                    {policy.policyName}: {policy.policyDescription}
+                  </Text>
+                </View>
+              ))
             ) : (
               <Text style={styles.emptyText}>Không có chính sách nào.</Text>
             )}
@@ -125,12 +119,12 @@ const ModalBookingCancelled = ({
                 value={cancelReason}
                 onChangeText={(text) => {
                   setCancelReason(text);
-                  setError("");
+                  setError(""); // Xóa lỗi khi người dùng bắt đầu nhập
                 }}
                 multiline
                 numberOfLines={4}
               />
-              {error && <Text style={styles.errorText}>{error}</Text>}
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
             </View>
           </ScrollView>
           <View style={styles.footer}>
@@ -155,16 +149,16 @@ export default ModalBookingCancelled;
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Nền mờ
     justifyContent: "center",
     alignItems: "center",
   },
   modalContainer: {
     backgroundColor: "#FFF",
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 20,
     width: "90%",
-    maxHeight: "80%",
+    maxHeight: "80%", // Giới hạn chiều cao
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -175,58 +169,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: 15,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "bold",
     color: "#000",
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 10,
-  },
   policies: {
-    maxHeight: 400,
+    maxHeight: 400, // Giới hạn chiều cao của ScrollView
     paddingVertical: 10,
   },
   policyItem: {
     flexDirection: "row",
-    paddingVertical: 12,
+    alignItems: "center",
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#f0f0f0",
   },
   iconPolicy: {
-    marginRight: 12,
-    marginTop: 5,
+    marginRight: 10,
   },
-  policyContent: {
-    flex: 1,
-  },
-  policyName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#191D39",
-    marginBottom: 4,
-  },
-  policyDescription: {
+  policyText: {
     fontSize: 14,
-    color: "#555",
-    lineHeight: 20,
-  },
-  policyDetails: {
-    fontSize: 13,
-    color: "#777",
-    marginTop: 4,
-  },
-  policyType: {
-    fontSize: 13,
-    color: "#777",
-    marginTop: 2,
+    color: "#000",
+    flex: 1,
   },
   emptyText: {
     fontSize: 14,
@@ -235,38 +204,38 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   reasonContainer: {
-    marginTop: 15,
+    marginTop: 10,
     marginBottom: 20,
   },
   reasonLabel: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
     color: "#000",
-    marginBottom: 8,
+    marginBottom: 5,
   },
   reasonInput: {
     borderWidth: 1,
     borderColor: "#E0E0E0",
     borderRadius: 8,
-    padding: 12,
+    padding: 10,
     fontSize: 14,
     color: "#000",
     backgroundColor: "#F9F9F9",
-    textAlignVertical: "top",
-    minHeight: 100,
+    textAlignVertical: "top", // Cho multiline
+    minHeight: 80, // Đảm bảo chiều cao phù hợp
   },
   inputError: {
-    borderColor: "#FF0000",
+    borderColor: "red", // Viền đỏ khi có lỗi
   },
   errorText: {
     fontSize: 12,
-    color: "#FF0000",
+    color: "red",
     marginTop: 5,
   },
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 15,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: "#E0E0E0",
   },
@@ -275,7 +244,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E0E0E0",
     borderRadius: 10,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     flex: 1,
     marginRight: 10,
@@ -284,12 +253,11 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     color: "#000",
-    fontWeight: "500",
   },
   applyButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: "red",
     borderRadius: 10,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     flex: 1,
     alignItems: "center",
@@ -297,6 +265,6 @@ const styles = StyleSheet.create({
   applyButtonText: {
     fontSize: 16,
     color: "#FFF",
-    fontWeight: "600",
+    fontWeight: "bold",
   },
 });

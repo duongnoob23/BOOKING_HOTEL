@@ -44,7 +44,10 @@ const HotelDetails = ({ navigation, route }) => {
   const { hotelList, hotelDetail, loading, error, inforFilter } =
     useAppSelector((state) => state.hotel);
 
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..", hotelDetail);
+  console.log(
+    ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",
+    hotelDetail?.nearBy?.nearBy
+  );
   // console.log(">>> 48 HD >>>", hotelDetail?.review?.feedback?.comments);
 
   useEffect(() => {

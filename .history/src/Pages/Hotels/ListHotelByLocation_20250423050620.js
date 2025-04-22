@@ -72,6 +72,7 @@ const ListHotelByLocation = ({ navigation }) => {
     // console.log(item?.hotelId);
   };
 
+  console.log("VVVVVVVVVVVVVVVVVVVV", hotelByLocation);
   const test = [
     {
       hotelId: 10,

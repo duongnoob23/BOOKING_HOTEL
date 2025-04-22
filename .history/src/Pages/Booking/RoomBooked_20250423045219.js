@@ -21,11 +21,13 @@ const ModalBookingCancelled = ({
   bookingId,
   navigation,
   handleToBookingScreen,
-  policyRoomList, // Nhận mảng từ props
+  policyRoomList = [], // Nhận mảng từ props, mặc định là mảng rỗng
+  roomList = [], // Danh sách phòng, giả sử từ props
 }) => {
   const bookingStatus = useAppSelector((state) => state.booking);
   const [cancelReason, setCancelReason] = useState("");
   const [error, setError] = useState("");
+  const [selectedRoom, setSelectedRoom] = useState(null); // Phòng được chọn để xem chi tiết
   const dispatch = useAppDispatch();
 
   const handleConfirmCancelled = () => {
@@ -52,19 +54,64 @@ const ModalBookingCancelled = ({
       dispatch(fetchBookingStatus())
         .unwrap()
         .catch((error) => {
-          Alert.alert(
-            "Lỗi",
-            `Không thể cập nhật trạng thái đặt phòng: ${error.message}`
-          );
+          Alert.alert("Lỗi", `Không thể cập nhật trạng thái đặt phòng: ${error.message}`);
         });
 
       setError("");
       setCancelReason("");
+      setSelectedRoom(null); // Đóng chi tiết phòng
       onClose();
       handleToBookingScreen();
     } catch (error) {
       Alert.alert("Lỗi", `Không thể xử lý hủy phòng: ${error.message}`);
     }
+  };
+
+  const handleRoomPress = (room) => {
+    try {
+      setSelectedRoom(room); // Mở chi tiết phòng
+      navigation.navigate("BookingHistoryDetails", {
+        room,
+        function: room?.status, // Truyền trạng thái phòng (booked, checkedIn, v.v.)
+      });
+    } catch (error) {
+      Alert.alert("Lỗi", `Không thể xem chi tiết phòng: ${error.message}`);
+    }
+  };
+
+  const renderRoomItem = (room, index) => {
+    if (!room?.name || !room?.status) return null;
+    const statusConfig = {
+      booked: { text: "Đã đặt", button: "Hủy", color: "#FF3B30", icon: "close-circle-outline" },
+      checkedIn: { text: "Đang ở", button: "CheckOut", color: "#007AFF", icon: "log-out-outline" },
+      checkedOut: { text: "Đã trả", button: "Đánh giá", color: "#34C759", icon: "star-outline" },
+      cancelled: { text: "Đã hủy", button: "Đã hoàn tiền", color: "#666", icon: "cash-outline" },
+    };
+
+    const config = statusConfig[room.status] || { text: "Không xác định", button: "", color: "#666" };
+
+    return (
+      <TouchableOpacity
+        key={room?.id || `room-${index}`}
+        style={styles.roomItem}
+        onPress={() => handleRoomPress(room)}
+      >
+        <View style={styles.roomContent}>
+          <Text style={styles.roomName}>{room.name}</Text>
+          <Text style={styles.roomStatus}>Trạng thái: {config.text}</Text>
+          {room?.bookingDate && (
+            <Text style={styles.roomDetails}>Ngày đặt: {room.bookingDate}</Text>
+          )}
+        </View>
+        <TouchableOpacity
+          style={[styles.actionButton, { backgroundColor: config.color }]}
+          onPress={() => handleRoomPress(room)}
+        >
+          <Ionicons name={config.icon} size={20} color="#FFF" style={styles.actionIcon} />
+          <Text style={styles.actionButtonText}>{config.button}</Text>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
   };
 
   const renderPolicyItem = (policy, index) => {
@@ -73,7 +120,7 @@ const ModalBookingCancelled = ({
       <View key={policy?.id || `policy-${index}`} style={styles.policyItem}>
         <Ionicons
           name="newspaper-outline"
-          size={20}
+          size=20
           color="#191D39"
           style={styles.iconPolicy}
         />
@@ -90,32 +137,30 @@ const ModalBookingCancelled = ({
     );
   };
 
-  return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>Chính sách hủy phòng</Text>
-            <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color="#000" />
-            </TouchableOpacity>
-          </View>
-          <ScrollView style={styles.policies}>
-            {policyRoomList?.length > 0 ? (
-              <>
-                <Text style={styles.sectionTitle}>Danh sách chính sách</Text>
-                {policyRoomList.map((policy, index) =>
-                  renderPolicyItem(policy, index)
-                )}
-              </>
-            ) : (
-              <Text style={styles.emptyText}>Không có chính sách nào.</Text>
-            )}
+  const renderRoomDetails = () => {
+    if (!selectedRoom) return null;
+    return (
+      <View style={styles.detailContainer}>
+        <View style={styles.detailHeader}>
+          <Text style={styles.detailHeaderText}>{selectedRoom?.name}</Text>
+          <TouchableOpacity onPress={() => setSelectedRoom(null)}>
+            <Ionicons name="close" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
+        <ScrollView style={styles.detailContent}>
+          <Text style={styles.detailStatus}>
+            Trạng thái: {selectedRoom?.status}
+          </Text>
+          {selectedRoom?.bookingDate && (
+            <Text style={styles.detailInfo}>Ngày đặt: {selectedRoom.bookingDate}</Text>
+          )}
+          {policyRoomList?.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Chính sách hủy phòng</Text>
+              {policyRoomList.map((policy, index) => renderPolicyItem(policy, index))}
+            </>
+          )}
+          {selectedRoom?.status === "booked" && (
             <View style={styles.reasonContainer}>
               <Text style={styles.reasonLabel}>Lý do hủy phòng</Text>
               <TextInput
@@ -132,9 +177,14 @@ const ModalBookingCancelled = ({
               />
               {error && <Text style={styles.errorText}>{error}</Text>}
             </View>
-          </ScrollView>
-          <View style={styles.footer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+          )}
+        </ScrollView>
+        {selectedRoom?.status === "booked" && (
+          <View style={styles.detailFooter}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setSelectedRoom(null)}
+            >
               <Text style={styles.cancelButtonText}>Hủy</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -144,6 +194,39 @@ const ModalBookingCancelled = ({
               <Text style={styles.applyButtonText}>Xác nhận hủy</Text>
             </TouchableOpacity>
           </View>
+        )}
+      </View>
+    );
+  };
+
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          {selectedRoom ? (
+            renderRoomDetails()
+          ) : (
+            <>
+              <View style={styles.header}>
+                <Text style={styles.headerText}>Danh sách phòng</Text>
+                <TouchableOpacity onPress={onClose}>
+                  <Ionicons name="close" size={24} color="#000" />
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={styles.roomList}>
+                {roomList?.length > 0 ? (
+                  roomList.map((room, index) => renderRoomItem(room, index))
+                ) : (
+                  <Text style={styles.emptyText}>Không có phòng nào.</Text>
+                )}
+              </ScrollView>
+            </>
+          )}
         </View>
       </View>
     </Modal>
@@ -184,15 +267,91 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#000",
   },
+  roomList: {
+    maxHeight: 400,
+    paddingVertical: 10,
+  },
+  roomItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+    backgroundColor: "#FAFAFA",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  roomContent: {
+    flex: 1,
+  },
+  roomName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#191D39",
+    marginBottom: 4,
+  },
+  roomStatus: {
+    fontSize: 14,
+    color: "#555",
+  },
+  roomDetails: {
+    fontSize: 13,
+    color: "#777",
+    marginTop: 4,
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  actionIcon: {
+    marginRight: 6,
+  },
+  actionButtonText: {
+    fontSize: 14,
+    color: "#FFF",
+    fontWeight: "500",
+  },
+  detailContainer: {
+    flex: 1,
+  },
+  detailHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+  },
+  detailHeaderText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#000",
+  },
+  detailContent: {
+    maxHeight: 400,
+    paddingVertical: 10,
+  },
+  detailStatus: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#191D39",
+    marginBottom: 8,
+  },
+  detailInfo: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 8,
+  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
     marginBottom: 10,
-  },
-  policies: {
-    maxHeight: 400,
-    paddingVertical: 10,
   },
   policyItem: {
     flexDirection: "row",
@@ -222,11 +381,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#777",
     marginTop: 4,
-  },
-  policyType: {
-    fontSize: 13,
-    color: "#777",
-    marginTop: 2,
   },
   emptyText: {
     fontSize: 14,
@@ -263,7 +417,7 @@ const styles = StyleSheet.create({
     color: "#FF0000",
     marginTop: 5,
   },
-  footer: {
+  detailFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingTop: 15,

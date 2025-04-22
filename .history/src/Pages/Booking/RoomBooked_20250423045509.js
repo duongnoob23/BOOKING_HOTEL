@@ -12,33 +12,33 @@ import { Ionicons } from "@expo/vector-icons"; // Dùng icon từ Expo
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import PriceScreen from "../Hotels/PriceScreen";
 import { useState } from "react";
-import { useAppSelector } from "../../Redux/hook";
+import { useAppDispatch, useAppSelector } from "../../Redux/hook";
 import { formatPrice } from "../../Utils/formarPrice";
-const RoomBooking = () => {
+import { getBookingDetails } from "../../Redux/Slice/bookingSlice";
+
+const RoomBooked = ({ navigation }) => {
   const { accessToken, isLoggedIn } = useAppSelector((state) => state.auth);
-  // if (!accessToken && !isLoggedIn) {
-  //   return (
-  //     <View style={styles.RequireLogin}>
-  //       <Text style={styles.RequireLoginText}>
-  //         Bạn cần đăng nhập để xem tính năng này
-  //       </Text>
-  //     </View>
-  //   );
-  // }
+
   const { bookingStatus, loadingBookingStatus } = useAppSelector(
     (state) => state.hotel
   );
 
-  const bookings = bookingStatus?.CHECKIN || [];
+  const { bookingDetailData } = useAppSelector((state) => state.booking);
+
+  console.log("bookingDetailData 29 >>>", bookingDetailData);
+  const dispatch = useAppDispatch();
+  const bookings = bookingStatus?.BOOKED || [];
+
   const handleToBookingDetail = (item) => {
     // console.log("item.bookingId", item.bookingId);
     dispatch(getBookingDetails(item.bookingId));
-    navigation.navigate("BookingHistoryDetails", { type: "Booking" });
+    navigation.navigate("BookingHistoryDetails", { type: "Booked" });
   };
+
   const renderBookingItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => handleToBookingDetail(item)}
       style={styles.bookingHistoryScreen__bookingItem}
+      onPress={() => handleToBookingDetail(item)}
     >
       <Image
         source={{ uri: item?.image }}
@@ -69,14 +69,25 @@ const RoomBooking = () => {
             Thông tin
           </Text>
         </TouchableOpacity> */}
-        <TouchableOpacity style={styles.bookingHistoryScreen__rebookButton}>
-          <Text style={styles.bookingHistoryScreen__rebookButtonText}>
-            CheckOut
-          </Text>
+        <TouchableOpacity
+          style={styles.bookingHistoryScreen__rebookButton}
+          onPress={() => handleToBookingDetail(item)}
+        >
+          <Text style={styles.bookingHistoryScreen__rebookButtonText}>Hủy</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
+
+  // if (!accessToken && !isLoggedIn) {
+  //   return (
+  //     <View style={styles.RequireLogin}>
+  //       <Text style={styles.RequireLoginText}>
+  //         Bạn cần đăng nhập để xem tính năng này
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={styles.bookingHistoryScreen}>
@@ -90,14 +101,14 @@ const RoomBooking = () => {
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons name="calendar-outline" size={50} color="#888888" />
-          <Text style={styles.emptyText}>Bạn chưa có phòng đang ở</Text>
+          <Text style={styles.emptyText}>Bạn chưa đặt phòng</Text>
         </View>
       )}
     </View>
   );
 };
 
-export default RoomBooking;
+export default RoomBooked;
 
 const styles = StyleSheet.create({
   bookingHistoryScreen: {
@@ -168,6 +179,8 @@ const styles = StyleSheet.create({
   bookingHistoryScreen__bookingItem: {
     flexDirection: "row",
     marginBottom: 20,
+    //     justifyContent: "flex-end",
+    alignItems: "flex-end",
     //     backgroundColor: "red",
   },
   bookingHistoryScreen__bookingImage: {
@@ -219,7 +232,6 @@ const styles = StyleSheet.create({
   bookingHistoryScreen__actionButtons: {
     justifyContent: "space-between",
     alignItems: "flex-end",
-    flexDirection: "column",
   },
   bookingHistoryScreen__infoButton: {
     backgroundColor: "#00A1D6", // Màu trung bình giữa #007AFF và #00C4B4
@@ -234,12 +246,11 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   bookingHistoryScreen__rebookButton: {
-    marginTop: "auto",
-    backgroundColor: "#00A1D6", // Màu trung bình giữa #007AFF và #00C4B4
+    backgroundColor: "red", // Màu trung bình giữa #007AFF và #00C4B4
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 30,
-    backgroundColor: "#00F598",
+    backgroundColor: "red",
   },
   bookingHistoryScreen__rebookButtonText: {
     fontSize: 14,

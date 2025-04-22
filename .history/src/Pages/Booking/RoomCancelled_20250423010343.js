@@ -14,7 +14,8 @@ import PriceScreen from "../Hotels/PriceScreen";
 import { useState } from "react";
 import { useAppSelector } from "../../Redux/hook";
 import { formatPrice } from "../../Utils/formarPrice";
-const RoomBooking = () => {
+
+const RoomCancelled = ({ navigation }) => {
   const { accessToken, isLoggedIn } = useAppSelector((state) => state.auth);
   // if (!accessToken && !isLoggedIn) {
   //   return (
@@ -25,21 +26,20 @@ const RoomBooking = () => {
   //     </View>
   //   );
   // }
+
   const { bookingStatus, loadingBookingStatus } = useAppSelector(
     (state) => state.hotel
   );
 
-  const bookings = bookingStatus?.CHECKIN || [];
-  const handleToBookingDetail = (item) => {
-    // console.log("item.bookingId", item.bookingId);
-    dispatch(getBookingDetails(item.bookingId));
-    navigation.navigate("BookingHistoryDetails", { type: "Booking" });
+  const bookings = bookingStatus?.CANCELED || [];
+
+  const handleReviewHotel = (item) => {
+    console.log(item);
+    navigation.navigate("RateApp", { item: item });
   };
+
   const renderBookingItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => handleToBookingDetail(item)}
-      style={styles.bookingHistoryScreen__bookingItem}
-    >
+    <View style={styles.bookingHistoryScreen__bookingItem}>
       <Image
         source={{ uri: item?.image }}
         style={styles.bookingHistoryScreen__bookingImage}
@@ -69,13 +69,17 @@ const RoomBooking = () => {
             Thông tin
           </Text>
         </TouchableOpacity> */}
-        <TouchableOpacity style={styles.bookingHistoryScreen__rebookButton}>
+        <TouchableOpacity
+          style={styles.bookingHistoryScreen__rebookButton}
+          // onPress={() => handleReviewHotel(item)}
+        >
           <Text style={styles.bookingHistoryScreen__rebookButtonText}>
-            CheckOut
+            {/* Đã hoàn tiền/ Đánh giá */}
+            Đánh giá
           </Text>
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -90,14 +94,13 @@ const RoomBooking = () => {
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons name="calendar-outline" size={50} color="#888888" />
-          <Text style={styles.emptyText}>Bạn chưa có phòng đang ở</Text>
+          <Text style={styles.emptyText}>Bạn chưa hủy phòng</Text>
         </View>
       )}
     </View>
   );
 };
-
-export default RoomBooking;
+export default RoomCancelled;
 
 const styles = StyleSheet.create({
   bookingHistoryScreen: {
@@ -168,6 +171,8 @@ const styles = StyleSheet.create({
   bookingHistoryScreen__bookingItem: {
     flexDirection: "row",
     marginBottom: 20,
+    //     justifyContent: "flex-end",
+    alignItems: "flex-end",
     //     backgroundColor: "red",
   },
   bookingHistoryScreen__bookingImage: {
@@ -219,7 +224,6 @@ const styles = StyleSheet.create({
   bookingHistoryScreen__actionButtons: {
     justifyContent: "space-between",
     alignItems: "flex-end",
-    flexDirection: "column",
   },
   bookingHistoryScreen__infoButton: {
     backgroundColor: "#00A1D6", // Màu trung bình giữa #007AFF và #00C4B4
@@ -234,12 +238,11 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   bookingHistoryScreen__rebookButton: {
-    marginTop: "auto",
-    backgroundColor: "#00A1D6", // Màu trung bình giữa #007AFF và #00C4B4
+    backgroundColor: "red", // Màu trung bình giữa #007AFF và #00C4B4
     borderRadius: 8,
     paddingVertical: 5,
-    paddingHorizontal: 30,
-    backgroundColor: "#00F598",
+    paddingHorizontal: 10,
+    backgroundColor: "#00C4B4",
   },
   bookingHistoryScreen__rebookButtonText: {
     fontSize: 14,

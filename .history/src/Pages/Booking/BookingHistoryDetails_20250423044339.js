@@ -25,8 +25,7 @@ import {
 } from "../../Redux/Slice/paymentSlice";
 import ModalBookingCancelled from "../../Components/Modal/Booking/ModalBookingCancelled";
 
-const BookingHistoryDetails = ({ navigation, route }) => {
-  const type = route?.params?.type;
+const BookingHistoryDetails = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { bookingDetailData, loadingBookingDetail } = useAppSelector(
     (state) => state.booking
@@ -117,61 +116,43 @@ const BookingHistoryDetails = ({ navigation, route }) => {
   const handleToBookingScreen = () => {
     navigation.navigate("BookingScreen");
   };
-  console.log("BBBBBBBBBBBBBBBBBBBBBBB", bookingDetailData);
-  // const test = {
-  //   bookingId: 198,
-  //   bookingStatus: "BOOKED",
-  //   checkIn: "22-09-2025 14:20:00",
-  //   checkOut: "23-09-2025 12:20:00",
-  //   finalPrice: "1060000.00",
-  //   hotelAddress: "Hà Nội",
-  //   hotelId: 2,
-  //   hotelName: "Onomo",
-  //   paymentDeposit: "530000.00",
-  //   policyList: [
-  //     {
-  //       condition: "12",
-  //       description: "Không hoàn tiền nếu hủy trong vòng 12 giờ trước check-in",
-  //       id: 9,
-  //       name: "Không hoàn tiền",
-  //       operator: "after",
-  //       type: "CANCEL",
-  //       value: "0%",
-  //     },
-  //     {
-  //       condition: "13",
-  //       description: "Không hoàn tiền nếu hủy trong vòng 12 giờ trước check-in",
-  //       id: 9,
-  //       name: "Không hoàn tiền",
-  //       operator: "after",
-  //       type: "CANCEL",
-  //       value: "0%",
-  //     },
-  //     {
-  //       condition: "14",
-  //       description: "Không hoàn tiền nếu hủy trong vòng 12 giờ trước check-in",
-  //       id: 9,
-  //       name: "Không hoàn tiền",
-  //       operator: "after",
-  //       type: "CANCEL",
-  //       value: "0%",
-  //     },
-  //   ],
-  //   priceCoupon: "20000.00",
-  //   roomBookedList: [
-  //     {
-  //       adults: 1,
-  //       priceRoom: 1080000,
-  //       priceService: 70000,
-  //       roomId: 2,
-  //       roomName: "Phòng Deluxe Gia đình VIP",
-  //       serviceSelect: [Array],
-  //     },
-  //   ],
-  //   totalAdults: 1,
-  //   totalPriceRoom: "1080000.00",
-  //   totalPriceService: "70000.00",
-  // };
+  console.log("BBBBBBBBBBBBBBBBBBBBBBB", bookingDetailData?.policyList);
+  const test = {
+    bookingId: 198,
+    bookingStatus: "BOOKED",
+    checkIn: "22-09-2025 14:20:00",
+    checkOut: "23-09-2025 12:20:00",
+    finalPrice: "1060000.00",
+    hotelAddress: "Hà Nội",
+    hotelId: 2,
+    hotelName: "Onomo",
+    paymentDeposit: "530000.00",
+    policyList: [
+      {
+        condition: "12",
+        description: "Không hoàn tiền nếu hủy trong vòng 12 giờ trước check-in",
+        id: 9,
+        name: "Không hoàn tiền",
+        operator: "after",
+        type: "CANCEL",
+        value: "0%",
+      },
+    ],
+    priceCoupon: "20000.00",
+    roomBookedList: [
+      {
+        adults: 1,
+        priceRoom: 1080000,
+        priceService: 70000,
+        roomId: 2,
+        roomName: "Phòng Deluxe Gia đình VIP",
+        serviceSelect: [Array],
+      },
+    ],
+    totalAdults: 1,
+    totalPriceRoom: "1080000.00",
+    totalPriceService: "70000.00",
+  };
   return (
     <View style={styles.container}>
       <ScrollView showsHorizontalScrollIndicator={false}>
@@ -283,19 +264,17 @@ const BookingHistoryDetails = ({ navigation, route }) => {
         </View>
         <View style={styles.br} />
       </View>
-      {type === "Booked" && (
-        <View style={styles.footerSection}>
-          <View style={styles.br} />
-          <Text style={styles.subTitle}>Phương thức hủy phòng</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setOpenModal(true)}
-          >
-            <Text style={styles.buttonText}>Xác nhận hủy phòng</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
+      <View style={styles.footerSection}>
+        <View style={styles.br} />
+        <Text style={styles.subTitle}>Phương thức hủy phòng</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setOpenModal(true)}
+        >
+          <Text style={styles.buttonText}>Xác nhận hủy phòng</Text>
+        </TouchableOpacity>
+      </View>
+      {/* {openModal && <ModalBookingCancelled onClose={setOpenModal(false)} />} */}
       <ModalBookingCancelled
         visible={openModal}
         onClose={() => setOpenModal(false)}
@@ -303,7 +282,6 @@ const BookingHistoryDetails = ({ navigation, route }) => {
         bookingId={bookingDetailData?.bookingId}
         handleToBookingScreen={handleToBookingScreen}
         policyRoomList={bookingDetailData?.policyList}
-        // policyRoomList={test.policyList}
       />
     </View>
   );

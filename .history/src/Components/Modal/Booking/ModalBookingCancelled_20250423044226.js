@@ -85,6 +85,9 @@ const ModalBookingCancelled = ({
               Điều kiện: {policy.condition} giờ, Hoàn tiền: {policy.value}
             </Text>
           )}
+          {policy?.type && (
+            <Text style={styles.policyType}>Loại: {policy.type}</Text>
+          )}
         </View>
       </View>
     );
