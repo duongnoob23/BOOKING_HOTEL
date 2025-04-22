@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Booking-App",
+    "slug": "sample-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyCYD4Gw2FYRAP60aK7t5PlbDQxGulZ7RQ8"
+      }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff"
+        }
+      ]
+    ],
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.anonymous.sampleapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCYD4Gw2FYRAP60aK7t5PlbDQxGulZ7RQ8"
+        }
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b5196577-4400-4ac0-b32c-2f90fb070f09"
+      }
+    },
+    "owner": "taiquan872k3"
+  }
+}

@@ -1,0 +1,511 @@
+_____________________________________________________Navigation.js_________________________________________________
++ trong phần navigation.js phần navigation là để chuyển đổi qua lại giữa các tab lớn nhất trong ứng dụng 
++ phần con ví dụ HomeStackNavigation là chuyển đổi giữa các stack con trong 1 tab lớn vì vậy navigation phải gọi
+  đến các stack này để vào tab lớn và thao tác qua các trang trong tab lớn
+
+<Tab.Screen
+      name="HomeTab"
+      component={HomeStackNavigator}
+      options={{ title: "Room" }}
+/>
+
+gọi đến ====> 
+
+const HomeStackNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Detail" component={DetailScreen} />
+    </Stack.Navigator>
+  );
+};
+
+
+_____________________________________________________  Cannot read property 'bubblingEventTypes' of null _______________________________________________________
+lỗi này thường xuất hiện khi cài thêm thư viện mới , cả picker và linear gradient
+chưa fix được
+Expo Go chỉ hỗ trợ một tập hợp các thư viện native được tích hợp sẵn trong Expo SDK (gọi là managed workflow).
+
+Nếu bạn sử dụng một thư viện yêu cầu mã native (như react-native-wheel-pick, vốn có thể phụ thuộc vào react-native-gesture-handler), bạn cần:
+Khai báo plugin trong app.json để Expo Go biết cách tích hợp thư viện.
+
+Hoặc chuyển sang bare workflow (dùng expo prebuild) nếu thư viện không được hỗ trợ trong Expo Go.
+
+{
+  "expo": {
+    "name": "sample-app",
+    "slug": "sample-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
+
+
+Hạn chế trên Android: Android không có thành phần Picker mặc định giống Wheel Picker như iOS. Để đạt được giao diện Wheel Picker trên Android, bạn cần dùng các thư viện bên thứ ba hoặc tùy chỉnh native code, điều này thường vượt ngoài khả năng của Expo Go.
+
+
+ OOOOOOOOOOOOOOOOOOO lỗi somethingwentwrong là khi ip của qr code không trùng với ip của wifi cho bất kì lý do nào đó, tắt radmin vpn, 1.1.1.1 ...
+
+OOOOOOOOOOOOOOOOOOO lỗi could not read package.json là chạy ko đúng tệp có file package.json,nhầm thư mucmuc
+
+
+
+
+
+__________________________________________________________________________CustomTopNav_______________________________________________________________________________________
+
+
+
+
+1. code phần con hotelDetail: 1h30 để fix và hiểu =)))
+giải thích phần điều hướng trang trong hotelDetails:
+Ban đầu:
+Phần tab navigation của bạn (HTML/CSS trong <View style={styles.header__tabs}>) nằm trong phần header của giao diện, tức là nó chỉ là một phần giao diện tĩnh, không liên kết trực tiếp với Tab.Navigator.
+
+Bạn đã dùng state css để điều khiển trạng thái active của tab (nền xanh, chữ trắng), nhưng việc nhấn vào tab chỉ thay đổi css mà không thực sự điều hướng đến các màn hình trong Tab.Navigator.
+
+Tab.Navigator bên dưới sử dụng screenOptions để tạo thanh tab mặc định, không liên quan đến phần tab navigation bạn đã tự code.
+
+Thay đổi:
+Bỏ phần tab mặc định của Tab.Navigator: Tôi đã loại bỏ screenOptions và CustomTabBar cũ (phiên bản trước đó mà tôi cung cấp), vì chúng ta sẽ dùng phần tab navigation của bạn để thay thế.
+
+Tích hợp phần tab của bạn vào Tab.Navigator: Tôi đã "bê" phần HTML/CSS của bạn (tức <View style={styles.header__tabs}> và các TouchableOpacity bên trong) vào CustomTabBar thông qua prop tabBar của Tab.Navigator. Cụ thể:
+javascript
+
+<Tab.Navigator
+  tabBar={(props) => <CustomTabBar {...props} />}
+  initialRouteName="Price"
+>
+
+Prop tabBar cho phép bạn render một thanh tab tùy chỉnh thay vì thanh tab mặc định của Tab.Navigator.
+
+CustomTabBar giờ đây chứa phần HTML/CSS của bạn (<View style={styles.header__tabs}>), và tôi đã thêm logic để nó điều hướng các màn hình.
+
+Kết quả:
+Đúng như bạn nói, phần Tab.Navigator giờ đây không tự tạo thanh tab nữa. Thay vào đó, nó sử dụng phần HTML/CSS của bạn (đã được tích hợp vào CustomTabBar) để làm thanh tab.
+
+Phần tab navigation của bạn không còn nằm trong header (về mặt logic), mà đã được "bê" vào CustomTabBar để trở thành thanh tab chính thức của Tab.Navigator. Tuy nhiên, về mặt giao diện, nó vẫn hiển thị ngay dưới header như trước, vì Tab.Navigator sẽ render thanh tab ở vị trí mặc định (trên cùng của nội dung).
+
+Vị trí giao diện:
+Mặc dù phần tab navigation đã được tích hợp vào Tab.Navigator, bạn vẫn có thể điều chỉnh vị trí hiển thị của nó bằng cách:
+Thêm style cho CustomTabBar (ví dụ: marginTop, position: 'absolute', v.v.).
+
+Hoặc di chuyển toàn bộ Tab.Navigator vào một vị trí khác trong giao diện (nếu cần).
+
+2. Giải thích { state, descriptors, navigation } trong CustomTabBar
+CustomTabBar là một component tùy chỉnh mà bạn cung cấp cho prop tabBar của Tab.Navigator. Khi Tab.Navigator render thanh tab, nó sẽ truyền một số tham số (props) vào CustomTabBar để bạn có thể sử dụng. Cụ thể:
+Các biến { state, descriptors, navigation }:
+state:
+Ý nghĩa: Chứa trạng thái hiện tại của Tab.Navigator.
+
+Giá trị trả về:
+state.routes: Một mảng chứa thông tin về các route (màn hình) trong Tab.Navigator. Mỗi route có key, name (tên màn hình, ví dụ: "Price", "Photo"), và các thuộc tính khác.
+
+state.index: Chỉ số của tab đang active (ví dụ: nếu tab "Price" đang active và là tab đầu tiên, thì state.index sẽ là 0).
+
+Dùng để làm gì: Dùng để biết tab nào đang active (state.index) và lặp qua các tab để render (state.routes).
+
+descriptors:
+Ý nghĩa: Một object chứa thông tin chi tiết về từng route, bao gồm các tùy chọn (options) bạn đã khai báo trong Tab.Screen.
+
+Giá trị trả về:
+Mỗi descriptors[route.key] chứa:
+options: Các tùy chọn của route (ví dụ: tabBarLabel, title).
+
+Các thuộc tính khác như navigation, route.
+
+Dùng để làm gì: Dùng để lấy tabBarLabel hoặc các tùy chọn khác của tab (ví dụ: trong code của bạn, tôi lấy label từ options.tabBarLabel).
+
+navigation:
+Ý nghĩa: Đối tượng navigation của Tab.Navigator, cho phép bạn điều hướng giữa các màn hình.
+
+Giá trị trả về:
+navigation.navigate(routeName): Điều hướng đến một màn hình cụ thể (ví dụ: navigation.navigate("Price")).
+
+navigation.emit(): Gửi sự kiện (dùng để xử lý các hành động như tabPress).
+
+Các phương thức khác như goBack, reset, v.v.
+
+Dùng để làm gì: Dùng để điều hướng khi người dùng nhấn vào tab (ví dụ: navigation.navigate("Price")).
+
+Tại sao cần các biến này?
+state giúp bạn biết tab nào đang active và lặp qua các tab để render giao diện.
+
+descriptors cung cấp thông tin chi tiết về từng tab (như label, icon, v.v.).
+
+navigation cho phép bạn điều hướng đến các màn hình khi người dùng tương tác (nhấn tab, vuốt, v.v.).
+
+Trong code của bạn:
+Tôi không dùng state và descriptors trực tiếp vì tôi đã hard-code 3 tab ("Bảng giá", "Ảnh", "Lần check"). Tuy nhiên, chúng vẫn cần thiết để Tab.Navigator truyền vào CustomTabBar.
+
+Tôi dùng navigation để điều hướng khi người dùng nhấn vào tab (xem câu hỏi 3 bên dưới).
+
+3 Tại sao navigation.navigate("Price") được dùng ở đây và tại sao không làm mất header?
+Tại sao dùng navigation.navigate("Price")?
+Trong CustomTabBar, khi người dùng nhấn vào một tab (ví dụ: "Bảng giá"), bạn muốn:
+Cập nhật trạng thái css để thay đổi giao diện (nền xanh, chữ trắng).
+
+Điều hướng đến màn hình tương ứng trong Tab.Navigator (ví dụ: PriceScreen).
+
+navigation.navigate("Price") được dùng để điều hướng đến màn hình Price trong Tab.Navigator. Đây là cách bạn yêu cầu Tab.Navigator chuyển đổi nội dung hiển thị sang màn hình tương ứng.
+
+Tại sao không làm mất header?
+Bạn hiểu đúng rằng navigation.navigate() thường được dùng để điều hướng toàn màn hình (ví dụ: từ màn hình A sang màn hình B trong một StackNavigator, làm thay đổi toàn bộ giao diện, bao gồm header).
+
+Tuy nhiên, trong trường hợp này, navigation.navigate() được gọi trong ngữ cảnh của Tab.Navigator, không phải StackNavigator. Cụ thể:
+Tab.Navigator là một navigator con (nested navigator) bên trong StackNavigator (vì HotelDetails là một màn hình trong stack của bạn).
+
+Khi bạn gọi navigation.navigate("Price") trong Tab.Navigator, nó chỉ thay đổi nội dung của phần nội dung (content area) của Tab.Navigator, tức là chuyển từ PriceScreen sang PhotoScreen hoặc CheckScreen.
+
+Phần header (và cả thanh tab) không bị ảnh hưởng, vì chúng nằm ngoài phạm vi điều hướng của Tab.Navigator. Header của bạn được render cố định trong giao diện của HotelDetails, không thuộc về Tab.Navigator.
+
+Minh họa:
+Cấu trúc giao diện của bạn:
+
+HotelDetails (màn hình trong StackNavigator)
+├── Header (ImageBackground, rating, location, v.v.)
+├── Tab.Navigator (PriceScreen, PhotoScreen, CheckScreen)
+│   ├── Thanh tab (CustomTabBar)
+│   └── Nội dung (PriceScreen/PhotoScreen/CheckScreen)
+└── (Phần body khác nếu có)
+
+Khi gọi navigation.navigate("Price"):
+Chỉ phần nội dung của Tab.Navigator thay đổi (từ PhotoScreen sang PriceScreen, ví dụ).
+
+Header và thanh tab (do CustomTabBar render) không bị ảnh hưởng, vì chúng không nằm trong phần nội dung của Tab.Navigator.
+
+So sánh với StackNavigator:
+Nếu bạn gọi navigation.navigate("SomeOtherScreen") trong một StackNavigator, toàn bộ màn hình sẽ thay đổi (bao gồm header), vì StackNavigator điều hướng toàn bộ màn hình.
+
+Nhưng trong Tab.Navigator, điều hướng chỉ ảnh hưởng đến nội dung của các tab, không làm mất header hay các phần giao diện khác.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__________________________________________________________________________CustomTopNav_______________________________________________________________________________________
+
+
+,chỉnh css các tabtab
+
+, phần zoom ảnh
+2. code giao diện của Quân
+
+vấn đề từ bên hotelDetails sang bên infoconfirm có giữ lại header ko hay chỉ chuyển thân
+nếu chỉ chuyển thân thì dùng modal hay dùng kiểu ẩn hiện file
+
+
+___________________________________________________________________FlatList______________________________________________________________________________
+tại sao bên trong Flatlistconst renderListFood = ({ item }) => {
+    return (
+      <View style={styles.foodCart__item}>
+        <Image
+          source={{
+            uri: ${item.url},
+          }} // Thay bằng URL hình ảnh thực tế
+          style={styles.foodCart__itemImage}
+        />
+        <View style={styles.foodCart__itemDetails}>
+          <Text style={styles.foodCart__itemName}>{item.name}</Text>
+          <Text style={styles.foodCart__itemPrice}>{item.price}</Text>
+        </View>
+        <View style={styles.foodCart__itemQuantity}>
+          <TouchableOpacity style={styles.foodCart__itemButton}>
+            <Text style={styles.foodCart__itemButtonText}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.foodCart__itemQuantityText}>{item.quantity}</Text>
+          <TouchableOpacity style={styles.foodCart__itemButton}>
+            <Text style={styles.foodCart__itemButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+<FlatList
+        data={FoodList}
+        renderItem={renderListFood}
+        keyExtractor={(item) => item.id}
+        style={styles.foodCart__items}
+      />const FoodList = [
+    {
+      id: 1,
+      name: "Bagels with turkey and bacon",
+      url: "https://media.istockphoto.com/id/2061716709/fr/photo/burger-de-c%C3%B4tes-grill%C3%A9es.webp?a=1&b=1&s=612x612&w=0&k=20&c=PvlYSm7Q_q7ro2i7tMJ4lnjELvPeBKnWIyzvOObmkEQ=",
+      price: "10.000",
+      quantity: "1",
+    },
+    {
+      id: 2,
+      name: "Sandwich",
+      url: "https://media.istockphoto.com/id/2061716709/fr/photo/burger-de-c%C3%B4tes-grill%C3%A9es.webp?a=1&b=1&s=612x612&w=0&k=20&c=PvlYSm7Q_q7ro2i7tMJ4lnjELvPeBKnWIyzvOObmkEQ=",
+      price: "10.000",
+      quantity: "1",
+    },
+  ];bên trong hàm render phải dùng ({item}) mới hoạt động, dùng (item) không hoạt động
+const renderListFood = ({ item }) => {bạn có thể nói rõ vấn đề này để tôi hiểu bản chất của flatList ko
+
+Cấu trúc dữ liệu mà renderItem nhận được
+Hàm renderItem không nhận trực tiếp phần tử item từ mảng data. Thay vào đó, FlatList truyền vào một object với cấu trúc như sau:
+javascript
+
+{
+  item: phần_tử_trong_mảng_data,
+  index: chỉ_số_của_phần_tử_trong_mảng,
+  separators: một_số_hàm_để_xử_lý_việc_thêm/xóa_phân_cách (ít dùng)
+}
+
+item: Là phần tử cụ thể trong mảng data (ví dụ: { id: 1, name: "Bagels with turkey and bacon", ... }).
+
+index: Là chỉ số của phần tử trong mảng (0, 1, 2, ...).
+
+separators: Một object chứa các hàm để xử lý phân cách (thường không cần dùng).
+
+Vì vậy, tham số đầu tiên mà hàm renderItem nhận được không phải là item trực tiếp, mà là một object chứa item, index, và separators.
+
+Cú pháp ({ item }) sử dụng destructuring assignment trong JavaScript để lấy trực tiếp thuộc tính item từ object mà FlatList truyền vào.
+
+({ item }) nghĩa là: "Lấy thuộc tính item từ object đầu vào và gán nó vào biến item để sử dụng trong hàm."
+
+Đây là cách đúng vì FlatList truyền vào một object { item, index, separators }.
+____________________________________________________________State.index trong custom topBar_____________________________________________________________________________
+Khái niệm state trong Tab.Navigator
+Trong React Navigation, khi bạn sử dụng createMaterialTopTabNavigator (hoặc bất kỳ navigator nào khác), nó quản lý trạng thái điều hướng nội bộ (navigation state) để theo dõi tab nào đang được hiển thị.
+
+state là một đối tượng được truyền vào CustomTabBar thông qua props của tabBar. Đối tượng state này chứa thông tin về trạng thái điều hướng hiện tại, bao gồm:
+state.routes: Một mảng chứa thông tin về các tab (mỗi tab là một route).
+
+state.index: Chỉ số (index) của tab hiện tại đang active (bắt đầu từ 0).
+
+Cách state.index thay đổi
+state.index thay đổi khi tab hiện tại thay đổi, và điều này xảy ra trong các trường hợp sau:
+Người dùng nhấn vào tab:
+Khi bạn gọi navigation.navigate("TabName") trong CustomTabBar, React Navigation sẽ cập nhật trạng thái điều hướng nội bộ. Điều này làm thay đổi state.index để phản ánh tab mới được chọn.
+
+Người dùng vuốt màn hình:
+Khi người dùng vuốt qua trái/phải để chuyển tab, Tab.Navigator tự động phát hiện hành động vuốt và cập nhật trạng thái điều hướng. state.index sẽ thay đổi để khớp với tab mới mà người dùng vuốt đến.
+
+Thay đổi tab bằng code:
+Nếu bạn sử dụng các API của React Navigation (như navigation.jumpTo hoặc navigation.navigate), state.index cũng sẽ được cập nhật.
+
+Giả sử người dùng đang ở tab "Đang đặt" (state.index = 0):
+Tab "Đang đặt" có style active (nền xanh, chữ trắng).
+
+Người dùng vuốt sang tab "Đã đặt":
+Tab.Navigator cập nhật state.index thành 1.
+
+CustomTabBar re-render và áp dụng style active cho tab "Đã đặt".
+
+Người dùng nhấn vào tab "Đã hủy":
+navigation.navigate("Cancelled") được gọi.
+
+Tab.Navigator cập nhật state.index thành 2.
+
+CustomTabBar re-render và áp dụng style active cho tab "Đã hủy".
+
+
+>>>>>>>>>>>>>>> tabBar cũ
+
+
+const CustomTabBar = ({ state, descriptors, navigation }) => {
+    return (
+      <View style={styles.header__tabs}>
+        <TouchableOpacity
+          style={[
+            styles.header__tab,
+            styles.header__tab__1,
+            css === 1 && styles.active,
+          ]}
+          onPress={() => {
+            setCss(1);
+            navigation.navigate("Price");
+          }}
+        >
+          <Text
+            style={[styles.header__tab__text, css === 1 && styles.activeText]}
+          >
+            
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.header__tab, css === 2 && styles.active]}
+          onPress={() => {
+            setCss(2);
+            navigation.navigate("Photo");
+          }}
+        >
+          <Text
+            style={[styles.header__tab__text, css === 2 && styles.activeText]}
+          >
+            
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.header__tab,
+            styles.header__tab__3,
+            css === 3 && styles.active,
+          ]}
+          onPress={() => {
+            setCss(3);
+            navigation.navigate("Check");
+          }}
+        >
+          <Text
+            style={[styles.header__tab__text, css === 3 && styles.activeText]}
+          >
+            Lần check (24)
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  ______________________________________________________Lỗi ip wifi không tự thay đổi theo______________________________________________________________-
+
+set ip của expo theo ip wifi, dành cho máy ko tự thay đổi ip 
+$env:REACT_NATIVE_PACKAGER_HOSTNAME = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -like "Wi-Fi*" }).IPAddress
+
+kiểm tra ip của máy hiện tại 
+$env:REACT_NATIVE_PACKAGER_HOSTNAME
+
+
+_______________________________________________________Lỗi cannot read property 'bubblingeventtypes' of null react-native _____________________________________________________
+lỗi này xảy ra ở rất nhiều thứ, không có nguyên nhân cụ thể
+cách fix là chuyển qua lại các tab lỗi để xem cụ thể là lỗi ở phần nào, nó sẽ có phần located at:
+còn nếu ở tab lỗi cannot read property 'bubblingeventtypes' thì ko fix được
+
+đọc kĩ các lỗi xem thiểu thư viện gì
+tải bằng expo install để tự tải phiên bản phù hợp không xung đột
+
+
+Trong React Native, component Modal là một thành phần đặc biệt. Khi bạn sử dụng Modal, nó luôn được render ở tầng cao nhất của ứng dụng, bất kể bạn đặt nó ở đâu trong cây giao diện (JSX). Điều này có nghĩa là nó không bị ảnh hưởng bởi vị trí của các thành phần cha (như TouchableOpacity hay inputContainer).
+
+Khi Modal được hiển thị (visible={true}), nó tạo một lớp phủ (overlay) bao phủ toàn bộ màn hình, và nội dung bên trong modal sẽ được đặt ở một vị trí độc lập, không phụ thuộc vào vị trí của inputContainer. Đây là thiết kế mặc định của Modal để đảm bảo nó luôn hiển thị trên tất cả các thành phần khác.
+
+tạm thời modal mình sẽ để ở giữa màn hình và chỉ cho chọn chứ chưa cho nhập input và gợi ý từ giống 
+
+
+
+
+
+CONFIG APP.JSON CŨ
+
+{
+  "expo": {
+    "name": "Booking-App",
+    "slug": "sample-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.sampleapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
+
+
+
+------------------LOGIC BẮT SỰ KIÊN NÚT BACK ĐỂ HIỂN THỊ MỘT PHẦN GIAO DIỆN----------------------------
+// const [showInfoConfirm, setShowInfoConfirm] = useState(false);
+  // const [showOrderConfirm, setShowOrderConfirm] = useState(false);
+
+   // useEffect(() => {
+  //   const backAction = () => {
+  //     if (showOrderConfirm && !showInfoConfirm) {
+  //       setShowOrderConfirm(false);
+  //       setShowInfoConfirm(true);
+  //       return true;
+  //     }
+  //     if (showInfoConfirm && !showOrderConfirm) {
+  //       setShowInfoConfirm(false);
+  //       return true;
+  //     }
+  //     return false;
+  //   };
+  // thằng lồn này sẽ được gọi khi mà ấn nút quay lạilại
+
+  //   const backHandler = BackHandler.addEventListener(
+  //     "hardwareBackPress",
+  //     backAction
+  //   ); // đăng ký nút quay lại thôi còn lại chả làm cái đéo gì cả
+
+  //   return () => backHandler.remove(); // thằng cu này sẽ được gọi khi mà chuyển sang trang mới hoặc back về, mục đích là xóa cái thằng nãy đăng ký đi
+  // }, [showInfoConfirm]);
+
+
+  {/* {!showInfoConfirm && !showOrderConfirm && (
+          <> */}
+          {/* </>
+        )} */}
+
+        {/* {showInfoConfirm && (
+          <InfoConfirmScreen handleOrderConfirm={handleOrderConfirm} />
+        )}
+        {showOrderConfirm && <OrderConfirmScreen />} */}
+
+
+
+---------------------------------Warning: TypeError: "isServiceAdded" is read-only-----------
+lỗi này là khi ta cố tình thay đổi giá trị của một biến khi khai báo nó bằng const 
+=> đổi nó sang let
+
+
+--------------------------Giải thích luông chạy của quá trình booking một cách chi tiết -----
+
+
+
+
+
+
+-----------------------------------Lỗi bàn phím bị đẩy lên trong expo go-------------------------------
+trong file app.json thêm phần sau vào android 
+"softwareKeyboardLayoutMode": "pan",

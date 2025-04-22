@@ -1,0 +1,88 @@
+{
+    "statusCode": 200,
+    "message": "Hotel detail successfully 1",
+    "data": {
+        "review": {
+            "rating": 3.9,
+            "sumReview": 85,
+            "description": "Tọa lạc trong khu vườn được chăm chút kỹ lưỡng với tầm nhìn ra đầm phá Ébrié, khách sạn cao cấp này mang phong cách nghệ thuật địa phương đương đại và các nét chấm phá kiến trúc tinh tế. Nơi đây cách Nhà thờ Hồi giáo Riviéra 3 km và Công viên Quốc gia Banco 17 km.",
+            "amenities": [
+                {
+                    "id": 4,
+                    "name": "Thích hợp trẻ em"
+                },
+                {
+                    "id": 1,
+                    "name": "Wi-fi miễn phí"
+                }
+            ],
+            "location": "Đà Nẵng",
+            "phoneNumber": "123456789",
+            "feedback": {
+                "fiveStar": 25.0,
+                "fourStar": 50.0,
+                "threeStar": 25.0,
+                "twoStar": 0.0,
+                "oneStar": 0.0,
+                "ratingHotel": 5.0,
+                "ratingRoom": 4.0,
+                "ratingLocation": 3.0,
+                "ratingService": 4.0,
+                "comments": [
+                    {
+                        "username": "admin@gmail.com",
+                        "urlAvatar": "https://res.cloudinary.com/dt7eo0hbq/image/upload/v1729235498/Room/samsipzu3uyuhyr7vdbl.jpg",
+                        "comment": "rất tốt",
+                        "rating": 5
+                    }
+                ]
+            }
+        },
+        "images": [
+            "https://res.cloudinary.com/dt7eo0hbq/image/upload/v1729242714/Room/luanwjwaiavziqz94mqu.jpg",
+            "https://res.cloudinary.com/dt7eo0hbq/image/upload/v1729241122/Room/nipyn0qgyoyhtgkadlyi.jpg"
+        ],
+        "nearBy": {
+            "descriptionLocation": "Đà Nẵng rất đẹp",
+            "ratingLocation": "4.5",
+            "activityList": [
+                {
+                    "name": "Da Nang Beach (Danang Beach)",
+                    "description": "No description",
+                    "rating": 4.5,
+                    "distance": "3729 m",
+                    "image": null
+                },
+                {
+                    "name": "Phạm Văn Đồng Beach",
+                    "description": "No description",
+                    "rating": 4.8,
+                    "distance": "3654 m",
+                    "image": null
+                },
+                {
+                    "name": "Bãi Biển Phước Mỹ",
+                    "description": "No description",
+                    "rating": 4.2,
+                    "distance": "3630 m",
+                    "image": null
+                },
+                {
+                    "name": "The Village",
+                    "description": "No description",
+                    "rating": 4.6,
+                    "distance": "4650 m",
+                    "image": null
+                },
+                {
+                    "name": "Da Nang Museum of Cham Sculpture (Bảo Tàng Điêu Khắc Chăm Đà Nẵng)",
+                    "description": "No description",
+                    "rating": 4.6,
+                    "distance": "1473 m",
+                    "image": null
+                }
+            ]
+        },
+        "priceMin": 800000.0
+    }
+}

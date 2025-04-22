@@ -1,0 +1,61 @@
+
+
++ học cách duyệt mảng Flatlist,scrollview vuốt màn hình dọc/ngang/dọc-ngangngang
++ học cách tạo input otp focus liên tục
++ học cách điều hướng navigation.navigate("file")
++ học cách tạo tab con của tab cha (HotelDetail là con của HomeScreen là con của HomeStackNavigation)
++ useLayoutEffect
++ cách sử dụng navigationBottomtab
+  cách ẩn hiện thanh tab ngoài cùng
++ cách sử dụng navigationTopTab
++ cách sử dụng navigation trong 1 file bất kì, custom navigationnavigation
++ cách sử dụng stack.screen createNativeStackNavigator()
++ sử dụng tab.screen createBottomTabNavigator()
++ xác thực người dùng bằng token của biến toàn cục
++ học cách chatgpt,grokk
++ học cách chia layout header,footer fix cứng, body thay đổi linh động với navigationBottomtab
++ học cách zoom ảnh
++ học mở modal
++ học xử lý sự kiện backhandler
++ cách sử dụng FlatList
+
+
+
+
+
+việc cần làm
+
++ rateDetails
+// tao list hình ảnh, render hình ảnh bẳng scroll view,
+// chỉnh lại css
+
++ OrderFood
+// viêts navigation top bar
+// viết danh sách món ăn theo top bar
+// css lại phàn giỏ hàng và tổng tiền
+// cách sử dụng redux chia sẻ data giữa các component
+// ấn nút thêm thì sẽ thêm sản phẩm vào shopcart
+// hiêu ứng sản phẩm nhảy vào shop
+
++ FoodCart
+// xử lý logic chỉnh quantity thì chỉnh data trong mảng
+// logic ấn thêm thì món ăn sẽ thêm vào danh sách giỏ hàng 
+
++ FindRoom
+// code danh sách phòng khách san, booking
+
++ EditProfile
+
+// code lại phần thêm ảnh vào profile
+
++ HotelDetails,HotelNearby
+// code phần bản đồ zoom lên
+
++ All
+tạo dữ liệu fix cứng đa dạng hơn
+đổi màu sang linear-gradient
+
+tối ưu code lại,khối code nào dùng chung tách riêng rad
+
+0090FF
+00F598
