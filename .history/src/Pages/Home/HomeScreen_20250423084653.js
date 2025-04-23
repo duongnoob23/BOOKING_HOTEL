@@ -291,9 +291,9 @@ const HomeScreen = ({ navigation }) => {
       {/* <Map /> */}
       <View style={styles.header}>
         <Text style={styles.title}>Tìm Phòng</Text>
-        {/* <TouchableOpacity onPress={() => handleToInfoConfirm()}>
+        <TouchableOpacity onPress={() => handleToInfoConfirm()}>
           <Icon name="filter" size={24} color="#007AFF" />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
       {/* Body */}
       <ScrollView style={styles.body} scrollEnabled={!open.Modal_1}>

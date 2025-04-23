@@ -14,7 +14,6 @@ import PriceScreen from "../Hotels/PriceScreen";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../Redux/hook";
 import { formatPrice } from "../../Utils/formarPrice";
-import { getBookingDetails } from "../../Redux/Slice/bookingSlice";
 
 const RoomCheckedOut = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -43,7 +42,7 @@ const RoomCheckedOut = ({ navigation }) => {
 
   const handleReviewHotel = (item) => {
     console.log(item);
-    navigation.navigate("RateApp", { item: item });
+    // navigation.navigate("RateApp", { item: item });
   };
   const handleToBookingDetail = (item) => {
     // console.log("item.bookingId", item.bookingId);

@@ -94,7 +94,6 @@ export const updateUserInfoJson = createAsyncThunk(
   }
 );
 
-//updateupdate
 export const updateUserInfo = createAsyncThunk(
   "auth/updateUserInfo",
   async (userInfo, { getState, rejectWithValue }) => {
@@ -243,6 +242,12 @@ const authSlice = createSlice({
         state.infoUser = action.payload;
       })
       .addCase(updateUserInfoJson.rejected, (state, action) => {
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(updateUserInfoFormData.fulfilled, (state, action) => {
+        state.infoUser = action.payload;
+      })
+      .addCase(updateUserInfoFormData.rejected, (state, action) => {
         state.error = action.payload || action.error.message;
       });
   },

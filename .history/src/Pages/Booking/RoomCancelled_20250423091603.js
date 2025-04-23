@@ -12,12 +12,10 @@ import { Ionicons } from "@expo/vector-icons"; // Dùng icon từ Expo
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import PriceScreen from "../Hotels/PriceScreen";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../Redux/hook";
+import { useAppSelector } from "../../Redux/hook";
 import { formatPrice } from "../../Utils/formarPrice";
-import { getBookingDetails } from "../../Redux/Slice/bookingSlice";
 
-const RoomCheckedOut = ({ navigation }) => {
-  const dispatch = useAppDispatch();
+const RoomCancelled = ({ navigation }) => {
   const { accessToken, isLoggedIn } = useAppSelector((state) => state.auth);
   // if (!accessToken && !isLoggedIn) {
   //   return (
@@ -32,14 +30,8 @@ const RoomCheckedOut = ({ navigation }) => {
   const { bookingStatus, loadingBookingStatus } = useAppSelector(
     (state) => state.hotel
   );
-  const bookings = bookingStatus?.CHECKOUT || [];
-  if (!bookings) {
-    return (
-      <View>
-        <Text>Loading checkin....</Text>
-      </View>
-    );
-  }
+
+  const bookings = bookingStatus?.CANCELED || [];
 
   const handleReviewHotel = (item) => {
     console.log(item);
@@ -48,7 +40,7 @@ const RoomCheckedOut = ({ navigation }) => {
   const handleToBookingDetail = (item) => {
     // console.log("item.bookingId", item.bookingId);
     dispatch(getBookingDetails(item.bookingId));
-    navigation.navigate("BookingHistoryDetails", { type: "CheckedOut" });
+    navigation.navigate("BookingHistoryDetails", { type: "Cancelled" });
   };
   const renderBookingItem = ({ item }) => (
     <TouchableOpacity
@@ -79,12 +71,18 @@ const RoomCheckedOut = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.bookingHistoryScreen__actionButtons}>
+        {/* <TouchableOpacity style={styles.bookingHistoryScreen__infoButton}>
+          <Text style={styles.bookingHistoryScreen__infoButtonText}>
+            Thông tin
+          </Text>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.bookingHistoryScreen__rebookButton}
-          onPress={() => handleReviewHotel(item)}
+          // onPress={() => handleReviewHotel(item)}
         >
           <Text style={styles.bookingHistoryScreen__rebookButtonText}>
-            Đánh giá
+            {/* Đã hoàn tiền/ Đánh giá */}
+            Đã hoàn tiền
           </Text>
         </TouchableOpacity>
       </View>
@@ -102,13 +100,14 @@ const RoomCheckedOut = ({ navigation }) => {
         />
       ) : (
         <View style={styles.emptyContainer}>
-          <Ionicons name="close-circle-outline" size={50} color="#888888" />
-          <Text style={styles.emptyText}>Bạn chưa có phòng đã trả</Text>
+          <Ionicons name="calendar-outline" size={50} color="#888888" />
+          <Text style={styles.emptyText}>Bạn chưa hủy phòng</Text>
         </View>
       )}
     </View>
   );
 };
+export default RoomCancelled;
 
 const styles = StyleSheet.create({
   bookingHistoryScreen: {
@@ -234,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   bookingHistoryScreen__infoButton: {
-    backgroundColor: "#00F598", // Màu trung bình giữa #007AFF và #00C4B4
+    backgroundColor: "#00A1D6", // Màu trung bình giữa #007AFF và #00C4B4
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 20,
@@ -246,11 +245,11 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   bookingHistoryScreen__rebookButton: {
-    // backgroundColor: "#00F598", // Màu trung bình giữa #007AFF và #00C4B4
+    backgroundColor: "red", // Màu trung bình giữa #007AFF và #00C4B4
     borderRadius: 8,
     paddingVertical: 5,
-    paddingHorizontal: 30,
-    backgroundColor: "#00F598",
+    paddingHorizontal: 10,
+    backgroundColor: "#00C4B4",
   },
   bookingHistoryScreen__rebookButtonText: {
     fontSize: 14,
@@ -303,5 +302,3 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-
-export default RoomCheckedOut;

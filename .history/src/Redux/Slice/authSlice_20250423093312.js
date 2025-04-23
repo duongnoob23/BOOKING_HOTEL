@@ -94,45 +94,44 @@ export const updateUserInfoJson = createAsyncThunk(
   }
 );
 
-//updateupdate
-export const updateUserInfo = createAsyncThunk(
-  "auth/updateUserInfo",
+export const updateUserInfoFormData = createAsyncThunk(
+  "auth/updateUserInfoFormData",
   async (userInfo, { getState, rejectWithValue }) => {
     try {
+      if (!userInfo) {
+        return rejectWithValue("Thông tin người dùng không được cung cấp");
+      }
+
       const { accessToken } = getState().auth;
       if (!accessToken) {
-        throw new Error("Không có token để gọi API");
+        return rejectWithValue("Không có token để gọi API");
       }
 
       const formData = new FormData();
-      formData.append("firstName", userInfo.firstName);
-      formData.append("lastName", userInfo.lastName);
-      formData.append("email", userInfo.email);
-      formData.append("phone", userInfo.phone);
-
-      // Nếu bạn muốn upload hình ảnh từ bộ nhớ (image là URI hoặc file object)
-      if (userInfo.image) {
-        formData.append("image", {
-          uri: userInfo.image.uri, // ví dụ: "file:///data/user/0/..."
-          name: userInfo.image.name || "avatar.jpg",
-          type: userInfo.image.type || "image/jpeg",
-        });
-      }
+      formData.append("firstName", userInfo.firstName || "");
+      formData.append("lastName", userInfo.lastName || "");
+      formData.append("email", userInfo.email || "");
+      formData.append("phoneNumber", userInfo.phoneNumber || "");
 
       const response = await fetch(`${API_BASE_URL}/api/user/update`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          // Không cần "Content-Type": multipart/form-data
-          // Fetch sẽ tự thêm boundary khi dùng FormData
         },
         body: formData,
       });
 
       const data = await response.json();
+
+      if (data.statusCode !== 200) {
+        return rejectWithValue(
+          data.message || "Lỗi khi cập nhật thông tin người dùng"
+        );
+      }
+
       return data.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || "Lỗi không xác định");
     }
   }
 );
@@ -243,6 +242,12 @@ const authSlice = createSlice({
         state.infoUser = action.payload;
       })
       .addCase(updateUserInfoJson.rejected, (state, action) => {
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(updateUserInfoFormData.fulfilled, (state, action) => {
+        state.infoUser = action.payload;
+      })
+      .addCase(updateUserInfoFormData.rejected, (state, action) => {
         state.error = action.payload || action.error.message;
       });
   },

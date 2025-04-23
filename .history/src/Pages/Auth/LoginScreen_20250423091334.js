@@ -75,12 +75,14 @@ const LoginScreen = ({ navigation, route }) => {
         const targetScreen = prePage === "InfoConfirm" ? "InfoConfirm" : "Home";
         console.log("AAAAAAAAAAAAAAAAA", targetScreen);
         // Reset stack để xóa các màn hình đăng nhập
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "Profile" }],
-          })
-        );
+        if (prePage === "Profile") {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "Profile" }],
+            })
+          );
+        }
 
         console.log(targetScreen);
 

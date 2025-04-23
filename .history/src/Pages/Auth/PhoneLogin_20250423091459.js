@@ -93,12 +93,14 @@ const PhoneLogin = ({ navigation }) => {
         const targetScreen = prePage === "InfoConfirm" ? "InfoConfirm" : "Home";
 
         // Reset stack để xóa các màn hình đăng nhập
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "Profile" }],
-          })
-        );
+        if (prePage) {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "Profile" }],
+            })
+          );
+        }
         navigation.navigate(`${targetScreen}`);
         // Xóa prePage sau khi điều hướng
         dispatch(clearPrePage());
