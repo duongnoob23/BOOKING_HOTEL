@@ -15,8 +15,7 @@ const MapPriceScreen = ({ route, data }) => {
   console.log("data mappppp", data);
   const { map } = useAppSelector((state) => state.hotel);
   const dispatch = useAppDispatch();
-  const [latitude, longitude] = data.split(",");
-  console.log(latitude, longitude);
+
   const handleOpenMap = () => {
     if (map === true) {
       openMapLocation();

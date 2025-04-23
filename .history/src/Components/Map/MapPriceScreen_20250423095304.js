@@ -16,7 +16,6 @@ const MapPriceScreen = ({ route, data }) => {
   const { map } = useAppSelector((state) => state.hotel);
   const dispatch = useAppDispatch();
   const [latitude, longitude] = data.split(",");
-  console.log(latitude, longitude);
   const handleOpenMap = () => {
     if (map === true) {
       openMapLocation();
@@ -28,8 +27,8 @@ const MapPriceScreen = ({ route, data }) => {
     handleOpenMap();
   }, [map]);
   const startCoordinate = {
-    latitude: 21.0312, // Lăng Chủ tịch Hồ Chí Minh
-    longitude: 105.8341,
+    latitude: latitude, // Lăng Chủ tịch Hồ Chí Minh
+    longitude: longitude,
   };
 
   //   const [showButtons, setShowButtons] = useState(false); // State để hiển thị nút

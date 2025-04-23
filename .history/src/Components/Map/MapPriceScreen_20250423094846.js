@@ -10,13 +10,12 @@ import MapView, { Marker } from "react-native-maps";
 import { useAppDispatch, useAppSelector } from "../../Redux/hook";
 import { mapOpenClose } from "../../Redux/Slice/hotelSlice";
 
-const MapPriceScreen = ({ route, data }) => {
-  // const data = route?.params;
+const MapPriceScreen = ({ route }) => {
+  const data = route?.params;
   console.log("data mappppp", data);
   const { map } = useAppSelector((state) => state.hotel);
   const dispatch = useAppDispatch();
-  const [latitude, longitude] = data.split(",");
-  console.log(latitude, longitude);
+
   const handleOpenMap = () => {
     if (map === true) {
       openMapLocation();

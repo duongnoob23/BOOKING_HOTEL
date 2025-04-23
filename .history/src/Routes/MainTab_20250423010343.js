@@ -22,7 +22,7 @@ const MainTab = () => {
         name="HomeTab"
         component={HomeStackNavigator}
         options={{
-          title: "Tìm phòng",
+          title: "Room",
           tabBarIcon: ({ focused, color, size }) => {
             const iconName = focused ? "storefront" : "storefront-outline";
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -33,7 +33,7 @@ const MainTab = () => {
         name="PromotionTab"
         component={PromotionStackNavigator}
         options={{
-          title: "Ưu đãi",
+          title: "Promotion",
           tabBarIcon: ({ focused, color, size }) => {
             const iconName = focused ? "bookmarks" : "bookmarks-outline";
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -44,7 +44,7 @@ const MainTab = () => {
         name="BookingTab"
         component={BookingStackNavigator}
         options={{
-          title: "Đặt phòng",
+          title: "Booking",
           tabBarIcon: ({ focused, color, size }) => {
             const iconName = focused ? "medkit" : "medkit-outline";
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -55,7 +55,7 @@ const MainTab = () => {
         name="NotificationTab"
         component={NotificationStackNavigator}
         options={{
-          title: "Thông báo",
+          title: "Notification",
           tabBarIcon: ({ focused, color, size }) => {
             const iconName = focused
               ? "notifications"
@@ -68,7 +68,7 @@ const MainTab = () => {
         name="AccountTab"
         component={AccountStackNavigator}
         options={{
-          title: "Hồ sơ",
+          title: "Account",
           tabBarIcon: ({ focused, color, size }) => {
             const iconName = focused ? "person" : "person-outline";
             return <Ionicons name={iconName} size={size} color={color} />;

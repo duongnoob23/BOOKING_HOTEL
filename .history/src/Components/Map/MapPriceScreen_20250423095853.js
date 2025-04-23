@@ -28,8 +28,8 @@ const MapPriceScreen = ({ route, data }) => {
     handleOpenMap();
   }, [map]);
   const startCoordinate = {
-    latitude: 21.0312, // Lăng Chủ tịch Hồ Chí Minh
-    longitude: 105.8341,
+    latitude: latitude + "", // Lăng Chủ tịch Hồ Chí Minh
+    longitude: longitude + "",
   };
 
   //   const [showButtons, setShowButtons] = useState(false); // State để hiển thị nút

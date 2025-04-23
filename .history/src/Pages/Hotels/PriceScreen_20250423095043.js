@@ -211,7 +211,7 @@ const PriceScreen = ({ navigation, route }) => {
   const handleViewAllComments = () => {
     navigation.navigate("AllComments", { comments: ratingsData });
   };
-  console.log(">>>>>>>>>>>>>>>", hotelDetail);
+  // console.log("ratingsData", ratingsData);
   return (
     <ScrollView style={styles.body}>
       {/* Title and description */}
@@ -361,7 +361,7 @@ const PriceScreen = ({ navigation, route }) => {
         <View style={styles.mapView}>
           <Text style={styles.mapViewTitle}>VỊ TRÍ KHÁCH SẠN</Text>
         </View>
-        <MapPriceScreen data={hotelDetail?.review?.ll} />
+        <MapPriceScreen data={"data ne cau"} />
       </View>
       {/* <RateReviews /> */}
       <View style={styles.ratings}>
